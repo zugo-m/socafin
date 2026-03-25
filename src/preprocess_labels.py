@@ -9,13 +9,25 @@ def decode_german_credit():
     output_path = os.path.join(project_root, 'data', 'german_credit_mapped.csv')
 
     if not os.path.exists(input_path):
-        print(f"❌ Error: {input_path} not found. Run fetch_data.py first.")
+        print(f"❌ Error: {input_path} not found. Please run fetch_data.py first.")
         return
 
     # 2. Load Raw Data
     df = pd.read_csv(input_path)
 
-    # 3. Full UCI Mapping (Verified Metadata)
+    # 3. Rename the Headers (Crucial for Notebook 01 and 02)
+    column_rename = {
+        'Attribute1': 'checking_status', 'Attribute2': 'duration', 'Attribute3': 'credit_history',
+        'Attribute4': 'purpose', 'Attribute5': 'credit_amount', 'Attribute6': 'savings_status',
+        'Attribute7': 'employment', 'Attribute8': 'installment_commitment', 'Attribute9': 'personal_status',
+        'Attribute10': 'other_parties', 'Attribute11': 'residence_since', 'Attribute12': 'property_magnitude',
+        'Attribute13': 'age', 'Attribute14': 'other_payment_plans', 'Attribute15': 'housing',
+        'Attribute16': 'existing_credits', 'Attribute17': 'job', 'Attribute18': 'num_dependents',
+        'Attribute19': 'own_telephone', 'Attribute20': 'foreign_worker'
+    }
+    df = df.rename(columns=column_rename)
+
+    # 4. Define the "Decoder Ring" (Mapping A11 -> Real Words)
     mappings = {
         'checking_status': {'A11': '< 0 DM', 'A12': '0 <= x < 200 DM', 'A13': '>= 200 DM', 'A14': 'no checking account'},
         'credit_history': {'A30': 'no credits/all paid', 'A31': 'all paid back here', 'A32': 'existing paid back', 'A33': 'delay in past', 'A34': 'critical account'},
@@ -30,17 +42,22 @@ def decode_german_credit():
         'job': {'A171': 'unemp/unskilled non-res', 'A172': 'unskilled resident', 'A173': 'skilled', 'A174': 'high qual/mgmt'},
         'own_telephone': {'A191': 'none', 'A192': 'yes'},
         'foreign_worker': {'A201': 'yes', 'A202': 'no'},
-        'class': {1: 'Good Risk', 2: 'Bad Risk'} # Mapping the target variable
+        'class': {1: 'Good Risk', 2: 'Bad Risk'} # 1=Good, 2=Bad in UCI raw data
     }
 
-    # 4. Apply the Transformation
+    # 5. Apply the Mapping
     for col, mapping in mappings.items():
         if col in df.columns:
             df[col] = df[col].map(mapping).fillna(df[col])
 
-    # 5. Save
+    # 6. Final Save
     df.to_csv(output_path, index=False)
-    print(f"✅ Readable data successfully saved to: {output_path}")
+    print("-" * 30)
+    print(f"✅ SUCCESS!")
+    print(f"1. Headers Renamed: {list(column_rename.values())[:3]}... etc.")
+    print(f"2. Values Decoded: A11 -> {df['checking_status'].iloc[0]}")
+    print(f"3. File Saved: {output_path}")
+    print("-" * 30)
 
 if __name__ == "__main__":
     decode_german_credit()
