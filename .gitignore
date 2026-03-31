@@ -1,14 +1,14 @@
 cat <<EOF > .gitignore
 # Environments
-venv/
-env/
-.env
 .venv/
 venv/
-__pycache__/
-*.pyc
+ENV/
+env/
+
 
 # Python junk
+__pycache__/
+*.pyc
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,6 +19,9 @@ __pycache__/
 Thumbs.db
 
 # Project-specific exclusions
+# Data/Models (Optional - depends if you want them on GitHub)
+data/*.csv
+models/*.pkl
 data/raw/
 models/*.joblib
 app/.streamlit/
