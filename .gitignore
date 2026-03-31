@@ -3,6 +3,10 @@ cat <<EOF > .gitignore
 venv/
 env/
 .env
+.venv/
+venv/
+__pycache__/
+*.pyc
 
 # Python junk
 __pycache__/
